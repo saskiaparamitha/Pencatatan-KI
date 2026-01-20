@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'divisi',
+        'role',
     ];
 
     /**
@@ -44,5 +46,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin()
+    {
+        return in_array($this->role, ['verifikator', 'reviewer']);
+    }
+
+    public function isVerifikator()
+    {
+        return $this->role === 'verifikator';
+    }
+
+    public function isReviewer()
+    {
+        return $this->role === 'reviewer';
     }
 }
