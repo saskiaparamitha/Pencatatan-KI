@@ -22,19 +22,22 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
-            $role = Auth::user()->role;
-
+            $user = Auth::user();
+            
             // Redirect berdasarkan role
-            if (in_array($role, ['verifikator', 'reviewer'])) {
-                return redirect()->route('admin.dashboard');
+            if ($user->role === 'pegawai') {
+                return redirect()->intended(route('user.dashboard'));
             }
 
-            if ($role === 'pegawai') {
-                return redirect()->route('user.dashboard');
+            if (in_array($user->role, ['verifikator', 'reviewer'])) {
+                return redirect()->intended(route('admin.dashboard'));
             }
 
-            // Fallback
-            return redirect('/');
+            // Fallback jika role tidak dikenali
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Role pengguna tidak valid.',
+            ]);
         }
 
         return back()->withErrors([

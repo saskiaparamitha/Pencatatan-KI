@@ -11,8 +11,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
-        'name',
+        'mst_pegawai_id',
+        'username',
         'email',
         'password',
         'role',
