@@ -17,11 +17,19 @@ Route::post('/login', [AuthController::class, 'login'])
     ->name('login.process');
 
 /* USER DASHBOARD */
-Route::middleware(['auth', 'role:pegawai'])
-    ->get('/user/dashboard', function () {
+Route::middleware(['auth', 'role:pegawai']) ->group(function () {
+    Route::get('/user/dashboard', function () {
         return view('user.dashboard');
-    })
-    ->name('user.dashboard');
+    })->name('user.dashboard');
+
+    Route::get('/user/pengajuan', function () {
+        return view('user.pengajuan');
+    })->name('user.pengajuan');
+
+    Route::get('/user/panduan', function () {
+        return view('user.panduan');
+    })->name('user.panduan');
+});
 
 /* ADMIN DASHBOARD */
 Route::middleware(['auth', 'role:verifikator,reviewer'])
