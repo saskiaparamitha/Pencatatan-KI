@@ -28,7 +28,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $role = $request->user()->role;
+
+        if ($role === 'verifikator' || $role === 'reviewer') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // Jika role adalah pegawai, arahkan ke dashboard user
+        if ($role === 'pegawai') {
+            return redirect()->route('dashboard');
+        }
+
+        // Default redirect jika tidak cocok
+        return redirect('/');
     }
 
     /**
@@ -36,12 +48,17 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
-
+        Auth::logout();
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
-        return redirect('/');
+        return redirect('/login');
     }
+
+        protected function authenticated(Request $request, $user)
+    {
+        // Jika login sukses, redirect ke dashboard
+        return redirect()->route('dashboard');
+    }
+
 }
+    

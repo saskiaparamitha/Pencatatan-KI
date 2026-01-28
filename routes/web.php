@@ -1,30 +1,50 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 
+/* HOME */
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+/* LOGIN */
+Route::get('/login', [AuthController::class, 'showLoginForm'])
+    ->name('login');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.process');
 
-    Route::middleware(['role:verifikator'])->group(function () {
-        Route::get('/admin/verifikator', function () {
-            return view('admin.verifikator');
-        });
-    });
+/* USER DASHBOARD */
+Route::middleware(['auth', 'role:pegawai'])
+    ->get('/user/dashboard', function () {
+        return view('user.dashboard');
+    })
+    ->name('user.dashboard');
 
-    Route::middleware(['role:reviewer'])->group(function () {
-        Route::get('/admin/reviewer', function () {
-            return view('admin.reviewer');
-        });
-    });
-});
+/* ADMIN DASHBOARD */
+Route::middleware(['auth', 'role:verifikator,reviewer'])
+    ->get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })
+    ->name('admin.dashboard');
+
+Route::get('/redirect', function () {
+    $user = Auth::user();
+    $role = $user->role;
+
+    if ($role === 'pegawai') {
+        return redirect()->route('user.dashboard');
+    }
+
+    if (in_array($role, ['verifikator', 'reviewer'])) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    abort(403);
+})->middleware('auth')->name('redirect');
+
+    /* LOGOUT */
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout');
