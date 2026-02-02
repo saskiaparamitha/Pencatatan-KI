@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Login - Pencatatan KI</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    @vite(['resources/css/app.css'])
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex items-center justify-center
              bg-gradient-to-br from-red-700 via-red-400 to-pink-200">

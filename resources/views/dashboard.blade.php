@@ -26,7 +26,7 @@
                         <p class="text-sm font-medium">Nama Pengguna</p>
                         <p class="text-xs text-teal-200">user@example.com</p>
                     </div>
-                    <button class="bg-teal-700 hover:bg-teal-800 px-4 py-2 rounded-lg transition duration-200">
+                    <button class="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-lg transition duration-200">
                         Logout
                     </button>
                 </div>
