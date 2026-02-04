@@ -36,20 +36,7 @@
                         2
                     </div>
                     <div class="ml-3">
-                        <p id="step-text-2" class="text-sm font-semibold text-gray-600">Upload Dokumen</p>
-                    </div>
-                </div>
-                
-                <!-- Line 2 -->
-                <div id="line-2" class="flex-1 h-1 bg-gray-300 mx-4"></div>
-                
-                <!-- Step 3 -->
-                <div class="flex items-center flex-1">
-                    <div id="step-circle-3" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">
-                        3
-                    </div>
-                    <div class="ml-3">
-                        <p id="step-text-3" class="text-sm font-semibold text-gray-600">Kolaborator</p>
+                        <p id="step-text-2" class="text-sm font-semibold text-gray-600">Kolaborator</p>
                     </div>
                 </div>
             </div>
@@ -96,6 +83,19 @@
                         max="{{ date('Y-m-d') }}">
                 </div>
 
+                <!-- Dokumen --> 
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Dokumen Deskripsi (PDF) *</label>
+                    
+                    <!-- Container untuk input file multiple -->
+                    <div id="dokumen-deskripsi-container">
+                        <div class="dokumen-deskripsi-item mb-2">
+                            <input type="file" name="dokumen_deskripsi[]" accept=".pdf, .jpg, .jpeg, .png" multiple
+                                class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Buttons Page 1 -->
                 <div class="flex gap-4">
                     <button type="button" onclick="saveDraft()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded transition duration-200">
@@ -109,87 +109,10 @@
                     </a>
                 </div>
             </div>
-
-            <!-- PAGE 2: Upload Dokumen -->
-            <div id="page-2" class="form-page hidden">
-                <h3 class="text-xl font-bold text-gray-800 mb-6">Upload Dokumen</h3>
-
-                <!-- Dokumen Deskripsi (Multiple dengan Button Tambah) -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Dokumen Deskripsi (PDF) *</label>
-                    
-                    <!-- Container untuk input file multiple -->
-                    <div id="dokumen-deskripsi-container">
-                        <div class="dokumen-deskripsi-item mb-2">
-                            <input type="file" name="dokumen_deskripsi[]" accept=".pdf"
-                                class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        </div>
-                    </div>
-                    
-                    <!-- Button untuk tambah input file baru -->
-                    <button type="button" onclick="addDokumenDeskripsi()" class="mt-2 text-red-600 hover:text-red-700 font-semibold text-sm">
-                        + Tambah Dokumen Lain
-                    </button>
-                    <p class="text-sm text-gray-500 mt-1">Format: PDF, Maksimal 10MB per file</p>
-                </div>
-
-                <!-- Gambar/Ilustrasi -->
-                <div class="mb-4">
-                    <!-- Container untuk input file multiple -->
-                    <div id="gambar-ilustrasi-teknis-container">
-                        <div class="gambar-ilustrasi-teknis-item mb-2">
-                            <input type="file" name="gambar_ilustrasi_teknis[]" accept="image/*,.pdf"
-                                class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        </div>
-                    </div>
-                    
-                    <!-- Button untuk tambah input file baru -->
-                    <button type="button" onclick="addGambarIlustrasiTeknis()" class="mt-2 text-red-600 hover:text-red-700 font-semibold text-sm">
-                        + Tambah Gambar/Ilustrasi Lain
-                    </button>
-                    <p class="text-sm text-gray-500 mt-1">Format: PDF, Maksimal 10MB per file</p>
-                    
-                    <label class="block text-gray-700 font-bold mb-2">Gambar/Ilustrasi Teknis</label>
-                    <input type="file" name="gambar" id="gambar" accept="image/*,.pdf"
-                        class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG, atau PDF, Maksimal 5MB</p>
-                </div>
-
-                <!-- Surat Pernyataan (Multiple dengan Button Tambah & TIDAK REQUIRED) -->
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-bold mb-2">Surat Pernyataan Kepemilikan (PDF)</label>
-                    
-                    <!-- Container untuk input file multiple -->
-                    <div id="surat-pernyataan-container">
-                        <div class="surat-pernyataan-item mb-2">
-                            <input type="file" name="surat_pernyataan[]" accept=".pdf"
-                                class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        </div>
-                    </div>
-                    
-                    <!-- Button untuk tambah input file baru -->
-                    <button type="button" onclick="addSuratPernyataan()" class="mt-2 text-red-600 hover:text-red-700 font-semibold text-sm">
-                        + Tambah Surat Lain
-                    </button>
-                    <p class="text-sm text-gray-500 mt-1">Format: PDF, Maksimal 5MB per file (Opsional)</p>
-                </div>
-
-                <!-- Buttons Page 2 -->
-                <div class="flex gap-4">
-                    <button type="button" onclick="previousPage(1)" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded transition duration-200">
-                        Kembali
-                    </button>
-                    <button type="button" onclick="saveDraft()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded transition duration-200">
-                        Simpan Draft
-                    </button>
-                    <button type="button" onclick="nextPage(3)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded transition duration-200">
-                        Lanjut
-                    </button>
-                </div>
             </div>
 
-            <!-- PAGE 3: Kolaborator -->
-            <div id="page-3" class="form-page hidden">
+            <!-- PAGE 2: Kolaborator -->
+            <div id="page-2" class="form-page hidden">
                 <h3 class="text-xl font-bold text-gray-800 mb-6">Tambah Kolaborator</h3>
                 
                 <p class="text-gray-600 mb-4">Tambahkan kolaborator yang terlibat dalam pembuatan hak cipta ini (opsional)</p>
@@ -218,9 +141,9 @@
                     </div>
                 </div>
 
-                <!-- Buttons Page 3 -->
+                <!-- Buttons Page 2 -->
                 <div class="flex gap-4">
-                    <button type="button" onclick="previousPage(2)" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded transition duration-200">
+                    <button type="button" onclick="previousPage(1)" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded transition duration-200">
                         Kembali
                     </button>
                     <button type="button" onclick="saveDraft()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded transition duration-200">
@@ -257,22 +180,6 @@ function addDokumenDeskripsi() {
     container.appendChild(newItem);
 }
 
-// ======== FUNGSI UNTUK TAMBAH INPUT FILE SURAT PERNYATAAN ========
-function addSuratPernyataan() {
-    const container = document.getElementById('surat-pernyataan-container');
-    const newItem = document.createElement('div');
-    newItem.className = 'surat-pernyataan-item mb-2 flex gap-2';
-    newItem.innerHTML = `
-        <input type="file" name="surat_pernyataan[]" accept=".pdf"
-            class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-800 px-3">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-    `;
-    container.appendChild(newItem);
-}
 
 // ======== FUNGSI UNTUK TAMBAH KOLABORATOR ========
 function addKolaborator() {

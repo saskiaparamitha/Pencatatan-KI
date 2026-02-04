@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TrxUsulanKiKolaborator extends Model
 {
-    use HasFactory;
-
     protected $table = 'trx_usulan_ki_kolaborator';
     protected $primaryKey = 'trx_usulan_ki_kolaborator_id';
 
@@ -26,6 +23,6 @@ class TrxUsulanKiKolaborator extends Model
 
     public function pegawai()
     {
-        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'id');
+        return $this->belongsTo(MstPegawai::class, 'pegawai_id', 'id');
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Pegawai;
+use App\Models\MstPegawai;
 
 class PegawaiController extends Controller
 {
@@ -11,7 +11,7 @@ class PegawaiController extends Controller
     {
         $query = $request->get('q');
 
-        $pegawai = Pegawai::where('nama', 'like', '%' . $query . '%')
+        $pegawai = MstPegawai::where('nama', 'like', '%' . $query . '%')
                         ->get(['mst_pegawai_id as id', 'nama']); // ← alias mst_pegawai_id jadi "id"
 
         return response()->json($pegawai);

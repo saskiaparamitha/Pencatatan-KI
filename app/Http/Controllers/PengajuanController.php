@@ -292,11 +292,9 @@ class PengajuanController extends Controller
 
                     TrxUsulanKIDokumen::create([
                         'trx_usulan_ki_id' => $usulanId,
-                        'jenis_dokumen' => 'dokumen_deskripsi',
-                        'file_name' => $file->getClientOriginalName(),
+                        'nama_dokumen' => $file->getClientOriginalName(),
+                        'tipe_dokumen' => 'dokumen_deskripsi',
                         'file_path' => $filePath,
-                        'file_size' => $file->getSize(),
-                        'mime_type' => $file->getMimeType(),
                     ]);
                 }
             }
@@ -314,11 +312,9 @@ class PengajuanController extends Controller
 
             TrxUsulanKIDokumen::create([
                 'trx_usulan_ki_id' => $usulanId,
-                'jenis_dokumen' => 'gambar',
-                'file_name' => $file->getClientOriginalName(),
+                'nama_dokumen' => $file->getClientOriginalName(),
+                'tipe_dokumen' => 'gambar',
                 'file_path' => $filePath,
-                'file_size' => $file->getSize(),
-                'mime_type' => $file->getMimeType(),
             ]);
         }
 
@@ -335,11 +331,9 @@ class PengajuanController extends Controller
 
                     TrxUsulanKIDokumen::create([
                         'trx_usulan_ki_id' => $usulanId,
-                        'jenis_dokumen' => 'surat_pernyataan',
-                        'file_name' => $file->getClientOriginalName(),
+                        'nama_dokumen' => $file->getClientOriginalName(),
+                        'tipe_dokumen' => 'surat_pernyataan',
                         'file_path' => $filePath,
-                        'file_size' => $file->getSize(),
-                        'mime_type' => $file->getMimeType(),
                     ]);
                 }
             }

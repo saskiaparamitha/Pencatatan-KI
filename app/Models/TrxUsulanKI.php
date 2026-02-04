@@ -2,37 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\MstStatus;
 
 class TrxUsulanKI extends Model
 {
-    use HasFactory, SoftDeletes;
-
     protected $table = 'trx_usulan_ki';
     protected $primaryKey = 'trx_usulan_ki_id';
 
     protected $fillable = [
-        'mst_ki_id', 'user_id', 'judul', 'tanggal', 'deskripsi', 'status',
-        'jenis_paten', 'bidang_teknologi',
-        'jenis_ciptaan', 'kategori',
-        'jenis_merek', 'kelas_merek',
-        'jenis_desain', 'produk',
-        'jenis_pvt', 'varietas',
-        'jenis_desain_tlst',
-        'wilayah', 'produk_ig',
-        'catatan',
-    ];
-
-    protected $casts = [
-        'tanggal' => 'date',
+        'mst_ki_id', 
+        'user_id', 
+        'judul',  
+        'tanggal',
+        'deskripsi', 
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function mstKI()
+    {
+        return $this->belongsTo(MstKI::class, 'mst_ki_id');
     }
 
     public function dokumen()
@@ -47,7 +39,7 @@ class TrxUsulanKI extends Model
 
     public function getDokumenByJenis($jenis)
     {
-        return $this->dokumen()->where('jenis_dokumen', $jenis)->get();
+        return $this->dokumen()->where('tipe_dokumen', $jenis)->get();
     }
 
     public function status()

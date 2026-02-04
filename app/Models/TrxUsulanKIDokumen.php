@@ -2,24 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class TrxUsulanKiDokumen extends Model
 {
-    use HasFactory;
-
     protected $table = 'trx_usulan_ki_dokumen';
     protected $primaryKey = 'trx_usulan_ki_dokumen_id';
 
     protected $fillable = [
         'trx_usulan_ki_id',
-        'jenis_dokumen',
-        'file_name',
+        'nama_dokumen',
+        'tipe_dokumen',
         'file_path',
-        'file_size',
-        'mime_type',
     ];
 
     public function usulanKi()
@@ -29,7 +24,10 @@ class TrxUsulanKiDokumen extends Model
 
     public function getUkuranFormatted()
     {
-        $bytes = $this->file_size;
+        if (!file_exists(storage_path('app/public/' . $this->file_path))) {
+            return '0 B';
+        }
+        $bytes = filesize(storage_path('app/public/' . $this->file_path));
         $units = ['B', 'KB', 'MB', 'GB'];
         
         for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
