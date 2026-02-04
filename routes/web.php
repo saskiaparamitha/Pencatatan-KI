@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PengajuanController;
+use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\HomeController;
 
 /* HOME */
@@ -56,33 +57,49 @@ Route::middleware(['auth', 'role:pegawai']) ->group(function () {
         return view('user.panduan');
     })->name('user.panduan');
 
-        Route::prefix('pengajuan')->name('pengajuan.')->group(function () {
-            Route::get('/', [PengajuanController::class, 'index'])
-                ->name('index');    
-            Route::get('/paten', [PengajuanController::class, 'createPaten'])
-                ->name('paten');
-            Route::get('/hak-cipta', [PengajuanController::class, 'createHakCipta'])
-                ->name('hak-cipta');
-            Route::get('/pvt', [PengajuanController::class, 'createPVT'])
-                ->name('pvt');
-            Route::get('/merek', [PengajuanController::class, 'createMerek'])
-                ->name('merek');
-            Route::get('/desain-industri', [PengajuanController::class, 'createDesainIndustri'])
-                ->name('desain-industri');
-            Route::get('/desain-tlst', [PengajuanController::class, 'createDesainTLST'])
-                ->name('desain-tlst');
-            Route::get('/indikasi-geografis', [PengajuanController::class, 'createIndikasiGeografis'])
-                ->name('indikasi-geografis');
-            Route::post('/', [PengajuanController::class, 'store'])
-                ->name('store');
+    Route::get('/pegawai/search', [PengajuanController::class, 'search']);
+
+    Route::prefix('pengajuan')->name('pengajuan.')->group(function () {
+        Route::get('/', [PengajuanController::class, 'index'])
+            ->name('index');    
+        Route::get('/paten', [PengajuanController::class, 'createPaten'])
+            ->name('paten');
+        Route::get('/hak-cipta', [PengajuanController::class, 'createHakCipta'])
+            ->name('hak-cipta');
+        Route::get('/pvt', [PengajuanController::class, 'createPVT'])
+            ->name('pvt');
+        Route::get('/merek', [PengajuanController::class, 'createMerek'])
+            ->name('merek');
+        Route::get('/desain-industri', [PengajuanController::class, 'createDesainIndustri'])
+            ->name('desain-industri');
+        Route::get('/desain-tlst', [PengajuanController::class, 'createDesainTLST'])
+            ->name('desain-tlst');
+        Route::get('/indikasi-geografis', [PengajuanController::class, 'createIndikasiGeografis'])
+            ->name('indikasi-geografis');
+        Route::post('/', [PengajuanController::class, 'storeDataForm'])
+            ->name('storeDataForm');
+        Route::post('/save-draft', [PengajuanController::class, 'storeDataForm'])
+            ->name('save-draft');
+        Route::delete('/dokumen/{id}', [PengajuanController::class, 'deleteDokumen'])
+            ->name('deleteDokumen');
+        Route::get('/dokumen', function () {
+            return view('user.dokumen');
+        })->name('dokumen');
+
+    // halaman dokumen (step selanjutnya)
+    Route::get('/pengajuan/dokumen', function () {
+        return view('user.dokumen');
+    })->name('pengajuan.dokumen');
+
+    // Search pegawai untuk kolaborator
+    Route::get('/pegawai/search', [PegawaiController::class, 'search'])
+        ->name('pegawai.search');
     });
 });
 
-/* Route Submit Form */
-Route::post('/pengajuan', function () {
-    // Logic untuk menyimpan data
-    return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil disimpan!');
-})->middleware('auth')->name('pengajuan.store');
+Route::post('/pengajuan/save-draft', 
+        [PengajuanController::class, 'storeDataForm']
+    )->name('pengajuan.save-draft');
 
     /* LOGOUT */
 Route::post('/logout', [AuthController::class, 'logout'])

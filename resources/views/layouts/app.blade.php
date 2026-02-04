@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Pencatatan KI')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -103,7 +103,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-red-800 text-white mt-16">
+    <footer class="bg-red-600 text-white mt-16">
         <div class="container mx-auto px-6 py-6">
             <div class="text-center">
                 <p class="text-sm">&copy; 2026 Sistem Pencatatan Kekayaan Intelektual. All rights reserved.</p>

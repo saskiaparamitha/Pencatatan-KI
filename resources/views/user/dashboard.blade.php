@@ -43,7 +43,7 @@
                 <div class="mb-8">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold text-gray-700">Status Terbaru</h2>
-                        <a href="#" class="text-sm text-teal-600 hover:text-teal-700">Lihat Semua ></a>
+                        <a href="#" class="text-sm text-red-600 hover:text-red-700">Lihat Semua ></a>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Status Card 1 -->
@@ -67,7 +67,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold text-gray-700">Informasi Penting</h2>
-                        <a href="#" class="text-sm text-teal-600 hover:text-teal-700">Lihat Semua ></a>
+                        <a href="#" class="text-sm text-red-600 hover:text-red-700">Lihat Semua ></a>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Info Card 1 -->
