@@ -14,7 +14,7 @@ class TrxUsulanKI extends Model
         'user_id', 
         'judul',  
         'tanggal',
-        'deskripsi', 
+        'deskripsi',
     ];
 
     public function user()

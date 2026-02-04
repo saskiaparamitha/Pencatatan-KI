@@ -105,7 +105,7 @@ class PengajuanController extends Controller
     {
         return TrxUsulanKI::where('user_id', Auth::id())
             ->where('mst_ki_id', $this->kiMap[$jenisKi])
-            ->where('mst_status_id', 1) // DRAFT
+            // ->where('mst_status_id', 1) // DRAFT
             ->latest()
             ->first();
     }
@@ -116,39 +116,56 @@ class PengajuanController extends Controller
      */
     public function storeDataForm(Request $request)
 {
-    // Validasi - SESUAIKAN dengan nama field di form
-    $request->validate([
+    // Validasi dasar untuk semua jenis KI
+    $rules = [
         'jenis_ki'           => 'required|string',
         'judul'              => 'required|string|max:255',
         'deskripsi'          => 'required|string',
-        'tempat_hak_cipta'   => 'required|string',
-        'tanggal_hak_cipta'  => 'required|date', // UBAH dari tanggal_pembuatan
         'dokumen_deskripsi'  => 'required|array|min:1',
-        'dokumen_deskripsi.*'=> 'required|file|mimes:pdf|max:10240',
-        'gambar_ilustrasi_teknis'    => 'nullable|array', // UBAH dari gambar
-        'gambar_ilustrasi_teknis.*'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        'surat_pernyataan'   => 'nullable|array',
-        'surat_pernyataan.*' => 'nullable|file|mimes:pdf|max:5120',
+        'dokumen_deskripsi.*'=> 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
         'kolaborator_ids'    => 'nullable|array',
         'pernyataan'         => 'required|accepted',
-    ]);
+    ];
+
+    // Validasi spesifik per jenis KI
+    switch ($request->jenis_ki) {
+        case 'hak_cipta':
+            $rules['tempat_hak_cipta'] = 'required|string';
+            $rules['tanggal_hak_cipta'] = 'required|date';
+            break;
+        case 'paten':
+            $rules['jenis_paten'] = 'required|string';
+            $rules['bidang_teknologi'] = 'required|string';
+            $rules['tanggal_pembuatan'] = 'required|date';
+            break;
+        case 'pvt':
+            $rules['tanggal_pembuatan'] = 'required|date';
+            break;
+    }
+
+    $request->validate($rules);
 
     DB::beginTransaction();
     
     try {
-        // Simpan data utama
-        $usulan = TrxUsulanKI::create([
+        // Persiapan data untuk insert
+        $data = [
             'mst_ki_id' => $this->kiMap[$request->jenis_ki],
             'user_id' => Auth::id(),
             'judul' => $request->judul,
-            'tanggal' => $request->tanggal_hak_cipta, // UBAH dari tanggal_pembuatan
             'deskripsi' => $request->deskripsi,
-            'mst_status_id' => 2, // Status SUBMIT (bukan 1/DRAFT)
+        ];
 
-            // Field khusus Hak Cipta
-            'tempat_hak_cipta' => $request->tempat_hak_cipta,
-            'tanggal_hak_cipta' => $request->tanggal_hak_cipta,
-        ]);
+        // Tentukan field tanggal sesuai jenis KI
+        if ($request->jenis_ki == 'hak_cipta') {
+            $data['tanggal'] = $request->tanggal_hak_cipta;
+            $data['deskripsi'] .= '\n\nTempat: ' . $request->tempat_hak_cipta;
+        } else {
+            $data['tanggal'] = $request->tanggal_pembuatan;
+        }
+
+        // Simpan data utama
+        $usulan = TrxUsulanKI::create($data);
 
         // Upload dokumen
         $this->uploadDokumen($request, $usulan);
@@ -163,9 +180,6 @@ class PengajuanController extends Controller
             
     } catch (\Exception $e) {
         DB::rollBack();
-        
-        // Log error untuk debugging
-        // \Log::error('Error submit pengajuan: ' . $e->getMessage());
         
         return back()->withInput()
             ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -359,8 +373,7 @@ class PengajuanController extends Controller
             if ($pegawaiId) {
                 TrxUsulanKIKolaborator::create([
                     'trx_usulan_ki_id' => $usulan->trx_usulan_ki_id,
-                    'pegawai_id' => $pegawaiId,
-                    'urutan' => $index + 1,
+                    'mst_pegawai_id' => $pegawaiId,
                 ]);
             }
         }

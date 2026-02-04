@@ -14,6 +14,30 @@
             <p class="text-gray-600 mt-2">Isi formulir di bawah ini untuk mengajukan hak cipta</p>
         </div>
 
+        <!-- Error Messages -->
+        @if ($errors->any())
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <strong class="font-bold">Error!</strong>
+                <ul class="mt-2 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('success'))
+            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <!-- Progress Steps -->
         <div class="mb-8">
             <div class="flex items-center justify-between">
@@ -108,7 +132,6 @@
                         Batal
                     </a>
                 </div>
-            </div>
             </div>
 
             <!-- PAGE 2: Kolaborator -->
@@ -255,7 +278,7 @@ function previousPage(page) {
 
 function updateProgress(page) {
     // Reset all steps
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 2; i++) {
         const circle = document.getElementById(`step-circle-${i}`);
         const text = document.getElementById(`step-text-${i}`);
         
@@ -275,7 +298,7 @@ function updateProgress(page) {
     }
     
     // Update lines
-    for (let i = 1; i <= 2; i++) {
+    for (let i = 1; i <= 1; i++) {
         const line = document.getElementById(`line-${i}`);
         if (i < page) {
             line.className = 'flex-1 h-1 bg-green-500 mx-4';
@@ -316,10 +339,8 @@ function validatePage(page) {
             document.getElementById('tanggal_hak_cipta').focus();
             return false;
         }
-    }
-    
-    if (page === 2) {
-        // Validasi dokumen deskripsi wajib, surat pernyataan opsional
+        
+        // Validasi dokumen deskripsi wajib
         const dokumenInputs = document.querySelectorAll('input[name="dokumen_deskripsi[]"]');
         
         let hasFile = false;
@@ -331,7 +352,7 @@ function validatePage(page) {
 
         if (!hasFile) {
             alert('Dokumen Deskripsi (PDF) wajib diupload minimal 1 file');
-            return false;
+            return false;   
         }
     }
 
