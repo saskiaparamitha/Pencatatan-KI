@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
-class TrxUsulanKiDokumen extends Model
+class TrxUsulanKIDokumen extends Model
 {
     protected $table = 'trx_usulan_ki_dokumen';
     protected $primaryKey = 'trx_usulan_ki_dokumen_id';
@@ -19,7 +19,7 @@ class TrxUsulanKiDokumen extends Model
 
     public function usulanKi()
     {
-        return $this->belongsTo(TrxUsulanKi::class, 'trx_usulan_ki_id', 'trx_usulan_ki_id');
+        return $this->belongsTo(TrxUsulanKI::class, 'trx_usulan_ki_id', 'trx_usulan_ki_id');
     }
 
     public function getUkuranFormatted()

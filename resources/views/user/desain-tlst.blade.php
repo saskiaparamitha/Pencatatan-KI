@@ -3,7 +3,7 @@
 @section('title', 'Form Pengajuan Desain TLST')
 
 @section('content')
-<div class="max-w-4xl mx-auto py-8 px-4">
+<div class="max-w-6xl mx-auto py-8 px-4">
     <div class="bg-white rounded-lg shadow-md p-8">
         <!-- Header -->
         <div class="mb-6">
@@ -192,7 +192,7 @@
 @push('scripts')
 <script>
 let currentPage = 1;
-let kolaboratorCount = 0;
+// let kolaboratorCount = 0;
 
 // ======== FUNGSI UNTUK TAMBAH INPUT FILE DOKUMEN DESKRIPSI ========
 function addDokumenDeskripsi() {
@@ -211,82 +211,110 @@ function addDokumenDeskripsi() {
     container.appendChild(newItem);
 }
 
-
 // ======== FUNGSI UNTUK TAMBAH KOLABORATOR ========
 function addKolaborator() {
     const container = document.getElementById('kolaborator-container');
+    const currentCount = container.querySelectorAll('.kolaborator-item').length;
+    const newIndex = Date.now();
+    const displayNumber = currentCount + 1;
+
     const newItem = document.createElement('div');
     newItem.className = 'kolaborator-item mb-4 p-4 bg-gray-50 rounded';
-    newItem.id = `kolaborator-${kolaboratorCount}`;
+    newItem.id = `kolaborator-${newIndex}`;
     
     newItem.innerHTML = `
         <div class="flex justify-between items-start mb-3">
-            <h4 class="font-semibold text-gray-700">Kolaborator ${kolaboratorCount + 1}</h4>
-            <button type="button" onclick="removeKolaborator(${kolaboratorCount})" class="text-red-600 hover:text-red-800">
+            <h4 class="font-semibold text-gray-700 kolaborator-label">Kolaborator ${displayNumber}</h4>
+            <button type="button" onclick="removeKolaborator('${newIndex}')" class="text-red-600 hover:text-red-800">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
-        
         <div class="relative">
             <label class="block text-gray-700 font-medium mb-2">Cari Pegawai</label>
             <input type="text" 
-                onkeyup="searchPegawai(this, ${kolaboratorCount})"
+                onfocus="loadAllPegawai(this, '${newIndex}')"
+                oninput="searchPegawai(this, '${newIndex}')"
                 class="border border-gray-300 rounded w-full py-2 px-3"
                 placeholder="Ketik nama pegawai...">
-
-            <ul id="pegawai-result-${kolaboratorCount}" 
+            <ul id="pegawai-result-${newIndex}" 
                 class="absolute z-10 bg-white border w-full rounded shadow mt-1 hidden max-h-60 overflow-y-auto"></ul>
-
-            <input type="hidden" name="kolaborator_ids[]" id="pegawai-id-${kolaboratorCount}">
+            <input type="hidden" name="kolaborator_ids[]" id="pegawai-id-${newIndex}">
         </div>
     `;
     
     container.appendChild(newItem);
-    kolaboratorCount++;
 }
 
 function nextPage(page) {
-    // Validate current page before moving to next
-    if (!validatePage(currentPage)) {
-        return;
-    }
+    if (!validatePage(currentPage)) return;
 
-    // Hide current page
-    document.getElementById(`page-${currentPage}`).classList.add('hidden');
-    
-    // Show next page
+    document.querySelectorAll('.form-page').forEach(p => p.classList.add('hidden'));
     document.getElementById(`page-${page}`).classList.remove('hidden');
-    
-    // Update progress
     updateProgress(page);
-    
     currentPage = page;
-    
-    // Scroll to top
+    saveFormState(); // <-- tambahkan ini
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function previousPage(page) {
-    // Hide current page
-    document.getElementById(`page-${currentPage}`).classList.add('hidden');
-    
-    // Show previous page
+    document.querySelectorAll('.form-page').forEach(p => p.classList.add('hidden'));
     document.getElementById(`page-${page}`).classList.remove('hidden');
-    
-    // Update progress
     updateProgress(page);
-    
     currentPage = page;
-    
-    // Scroll to top
+    saveFormState(); // <-- tambahkan ini
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ======== SIMPAN & RESTORE FORM STATE ========
+function saveFormState() {
+    const formData = {
+        judul: document.getElementById('judul').value,
+        jenis_paten: document.getElementById('jenis_paten').value,
+        deskripsi: document.getElementById('deskripsi').value,
+        bidang_teknologi: document.getElementById('bidang_teknologi').value,
+        tanggal_pembuatan: document.getElementById('tanggal_pembuatan').value,
+        currentPage: currentPage
+    };
+    sessionStorage.setItem('paten_form', JSON.stringify(formData));
+}
+
+function restoreFormState() {
+    const saved = sessionStorage.getItem('paten_form');
+    if (!saved) return;
+    
+    const formData = JSON.parse(saved);
+    
+    document.getElementById('judul').value = formData.judul || '';
+    document.getElementById('jenis_paten').value = formData.jenis_paten || '';
+    document.getElementById('deskripsi').value = formData.deskripsi || '';
+    document.getElementById('bidang_teknologi').value = formData.bidang_teknologi || '';
+    document.getElementById('tanggal_pembuatan').value = formData.tanggal_pembuatan || '';
+    
+    // Restore halaman terakhir
+    if (formData.currentPage && formData.currentPage > 1) {
+        document.querySelectorAll('.form-page').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`page-${formData.currentPage}`).classList.remove('hidden');
+        updateProgress(formData.currentPage);
+        currentPage = formData.currentPage;
+    }
+}
+
+// Simpan state setiap ada perubahan input
+document.querySelectorAll('#multiStepForm input, #multiStepForm select, #multiStepForm textarea').forEach(el => {
+    el.addEventListener('change', saveFormState);
+    el.addEventListener('input', saveFormState);
+});
+
+// Hapus state setelah submit berhasil
+document.getElementById('multiStepForm').addEventListener('submit', function() {
+    sessionStorage.removeItem('paten_form');
+});
+
 function updateProgress(page) {
     // Reset all steps
-    for (let i = 1; i <= 2; i++) {
+    for (let i = 1; i <= 3; i++) {
         const circle = document.getElementById(`step-circle-${i}`);
         const text = document.getElementById(`step-text-${i}`);
         
@@ -306,33 +334,34 @@ function updateProgress(page) {
     }
     
     // Update lines
-    for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 2; i++) {
         const line = document.getElementById(`line-${i}`);
-        if (i < page) {
-            line.className = 'flex-1 h-1 bg-green-500 mx-4';
-        } else {
-            line.className = 'flex-1 h-1 bg-gray-300 mx-4';
-        }
+        if (!line) continue; // skip jika element tidak ada di HTML
+
+        line.className = i < page
+            ? 'flex-1 h-1 bg-green-500 mx-4'
+            : 'flex-1 h-1 bg-gray-300 mx-4';
     }
 }
 
 function validatePage(page) {
     if (page === 1) {
-        // Validate page 1 fields untuk Hak Cipta
+        // Validate page 1 fields
         const judul = document.getElementById('judul').value.trim();
-        const tempatHakCipta = document.getElementById('tempat_hak_cipta').value.trim();
+        const jenisPaten = document.getElementById('jenis_paten').value;
         const deskripsi = document.getElementById('deskripsi').value.trim();
-        const tanggalHakCipta = document.getElementById('tanggal_hak_cipta').value;
+        const bidangTeknologi = document.getElementById('bidang_teknologi').value;
+        const tanggalPembuatan = document.getElementById('tanggal_pembuatan').value;
         
         if (!judul) {
-            alert('Judul Hak Cipta harus diisi');
+            alert('Judul Paten harus diisi');
             document.getElementById('judul').focus();
             return false;
         }
         
-        if (!tempatHakCipta) {
-            alert('Tempat Hak Cipta harus diisi');
-            document.getElementById('tempat_hak_cipta').focus();
+        if (!jenisPaten) {
+            alert('Jenis Paten harus dipilih');
+            document.getElementById('jenis_paten').focus();
             return false;
         }
         
@@ -342,15 +371,19 @@ function validatePage(page) {
             return false;
         }
         
-        if (!tanggalHakCipta) {
-            alert('Tanggal Hak Cipta harus diisi');
-            document.getElementById('tanggal_hak_cipta').focus();
+        if (!bidangTeknologi) {
+            alert('Bidang Teknologi harus dipilih');
+            document.getElementById('bidang_teknologi').focus();
             return false;
         }
         
-        // Validasi dokumen deskripsi wajib
-        const dokumenInputs = document.querySelectorAll('input[name="dokumen_deskripsi[]"]');
+        if (!tanggalPembuatan) {
+            alert('Tanggal Pembuatan harus diisi');
+            document.getElementById('tanggal_pembuatan').focus();
+            return false;
+        }
         
+        const dokumenInputs = document.querySelectorAll('input[name="dokumen_deskripsi[]"]');
         let hasFile = false;
         dokumenInputs.forEach(input => {
             if (input.files.length > 0) {
@@ -359,67 +392,98 @@ function validatePage(page) {
         });
 
         if (!hasFile) {
-            alert('Dokumen Deskripsi (PDF) wajib diupload minimal 1 file');
-            return false;   
+            alert('Dokumen Deskripsi wajib diupload minimal 1 file');
+            return false;
         }
     }
 
     return true;
 }
 
+function loadAllPegawai(input, id) {
+    const resultBox = document.getElementById(`pegawai-result-${id}`);
+    
+    fetch(`/pegawai/search?q=`)
+        .then(res => res.json())
+        .then(data => {
+            renderPegawaiList(data, input, id);
+            resultBox.classList.remove('hidden');
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 function searchPegawai(input, id) {
     const query = input.value;
     const resultBox = document.getElementById(`pegawai-result-${id}`);
 
-    if (query.length < 2) {
-        resultBox.classList.add('hidden');
-        return;
-    }
-
     fetch(`/pegawai/search?q=${query}`)
         .then(res => res.json())
         .then(data => {
-            resultBox.innerHTML = '';
+            renderPegawaiList(data, input, id);
             resultBox.classList.remove('hidden');
-
-            if (data.length === 0) {
-                const li = document.createElement('li');
-                li.className = 'px-3 py-2 text-gray-500';
-                li.innerText = 'Tidak ada hasil';
-                resultBox.appendChild(li);
-                return;
-            }
-
-            data.forEach(p => {
-                const li = document.createElement('li');
-                li.className = 'px-3 py-2 hover:bg-gray-100 cursor-pointer';
-                li.innerText = p.nama;
-
-                li.onclick = () => {
-                    input.value = p.nama;
-                    document.getElementById(`pegawai-id-${id}`).value = p.id;
-                    resultBox.classList.add('hidden');
-                };
-
-                resultBox.appendChild(li);
-            });
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => console.error('Error:', error));
 }
+
+// Render list pegawai
+function renderPegawaiList(data, input, id) {
+    const resultBox = document.getElementById(`pegawai-result-${id}`);
+    resultBox.innerHTML = '';
+
+    if (data.length === 0) {
+        const li = document.createElement('li');
+        li.className = 'px-3 py-2 text-gray-500';
+        li.innerText = 'Tidak ada hasil';
+        resultBox.appendChild(li);
+        return;
+    }
+
+    data.forEach(p => {
+        const li = document.createElement('li');
+        li.className = 'px-3 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100';
+        li.innerHTML = `
+            <p class="text-sm font-medium text-gray-800">${p.nama}</p>
+            <p class="text-xs text-gray-500">${p.nip_pegawai} • ${p.satuan_kerja}</p>
+        `;
+        li.onclick = () => {
+            input.value = p.nama;
+            document.getElementById(`pegawai-id-${id}`).value = p.mst_pegawai_id;
+            resultBox.classList.add('hidden');
+        };
+        resultBox.appendChild(li);
+    });
+}
+
+// Tutup dropdown saat klik di luar
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#kolaborator-container')) {
+        document.querySelectorAll('[id^="pegawai-result-"]').forEach(box => {
+            box.classList.add('hidden');
+        });
+    }
+});
 
 function removeKolaborator(id) {
     const kolaboratorItem = document.getElementById(`kolaborator-${id}`);
     if (kolaboratorItem) {
         if (confirm('Apakah Anda yakin ingin menghapus kolaborator ini?')) {
             kolaboratorItem.remove();
+            renumberKolaborator(); // renumber setelah hapus
         }
     }
 }
 
+function renumberKolaborator() {
+    const container = document.getElementById('kolaborator-container');
+    const items = container.querySelectorAll('.kolaborator-item');
+    items.forEach((item, index) => {
+        const label = item.querySelector('.kolaborator-label');
+        if (label) label.textContent = `Kolaborator ${index + 1}`;
+    });
+}
+
 function saveDraft() {
-    let formData = new FormData(document.getElementById('multiStepForm'));
+    let formData = new FormData(document.getElementById('formKI'));
 
     fetch("{{ route('pengajuan.save-draft') }}", {
         method: "POST",
@@ -431,15 +495,11 @@ function saveDraft() {
     .then(res => res.json())
     .then(res => {
         if (res.success) {
-            alert('Draft berhasil disimpan!');
-            window.location.href = "{{ route('pengajuan.dokumen') }}?usulan_id=" + res.usulan_id;
+            window.location.href =
+                "{{ route('pengajuan.dokumen') }}?usulan_id=" + res.usulan_id;
         } else {
-            alert(res.message || 'Gagal menyimpan draft');
+            alert(res.message);
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat menyimpan draft');
     });
 }
 
@@ -457,9 +517,11 @@ document.getElementById('multiStepForm').addEventListener('submit', function(e) 
     if (!validatePage(1)) {
         e.preventDefault();
         previousPage(1);
-        return true;
+        return false;
     }
 });
+
+restoreFormState();
 </script>
 @endpush
 @endsection

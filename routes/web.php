@@ -3,16 +3,29 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminController;
+//use App\Http\Controllers\UserController;
+//use App\Http\Controllers\AdminController;
+//use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\HomeController;
+//use App\Http\Controllers\HomeController;
+
+Route::get('/', function () {
+    return view('landing-page');
+})->name('landing');
+
+//Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');
+//Route::get('/pengumuman/{id}', [PengumumanController::class, 'show'])->name('pengumuman.show');
+
+Route::get('/tentang-web', function () {
+    return view('tentang-web');
+})->name('tentang-web');
 
 /* HOME */
-Route::get('/', function () {
-    return view('auth.login');
-});
+// Route::get('/', function () {
+//     return view('auth.login');
+// });
 
 /* LOGIN */
 Route::get('/login', [AuthController::class, 'showLoginForm'])
@@ -45,9 +58,8 @@ Route::get('/redirect', function () {
 
 /* USER DASHBOARD */
 Route::middleware(['auth', 'role:pegawai']) ->group(function () {
-    Route::get('/user/dashboard', function () {
-        return view('user.dashboard');
-    })->name('user.dashboard');
+    Route::get('/user/dashboard', [DashboardController::class, 'index'])
+    ->name('user.dashboard');
 
     Route::get('/user/pengajuan', function () {
         return view('user.pengajuan');
@@ -57,7 +69,7 @@ Route::middleware(['auth', 'role:pegawai']) ->group(function () {
         return view('user.panduan');
     })->name('user.panduan');
 
-    Route::get('/pegawai/search', [PengajuanController::class, 'search']);
+    Route::get('/pegawai/search', [PengajuanController::class, 'searchPegawai']);
 
     Route::prefix('pengajuan')->name('pengajuan.')->group(function () {
         Route::get('/', [PengajuanController::class, 'index'])
@@ -76,9 +88,13 @@ Route::middleware(['auth', 'role:pegawai']) ->group(function () {
             ->name('desain-tlst');
         Route::get('/indikasi-geografis', [PengajuanController::class, 'createIndikasiGeografis'])
             ->name('indikasi-geografis');
+        Route::get('/{id}', [PengajuanController::class, 'show'])
+            ->name('show');
+        Route::get('/riwayat', [PengajuanController::class, 'riwayat'])
+            ->name('riwayat');
         Route::post('/', [PengajuanController::class, 'storeDataForm'])
             ->name('storeDataForm');
-        Route::post('/save-draft', [PengajuanController::class, 'storeDataForm'])
+        Route::post('/save-draft', [PengajuanController::class, 'saveDraft'])
             ->name('save-draft');
         Route::delete('/dokumen/{id}', [PengajuanController::class, 'deleteDokumen'])
             ->name('deleteDokumen');

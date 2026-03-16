@@ -12,30 +12,29 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-red-50 to-cyan-100 min-h-screen">
-    
+<body class="bg-gradient-to-br from-red-50 to-cyan-100 min-h-screen flex flex-col">
     <!-- Header -->
     <header class="bg-red-600 text-white shadow-lg">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <!-- Logo & Title (Kiri) -->
-                <div class="flex-shrink-0">
+                <a href="{{ route('user.dashboard') }}" class="flex-shrink-0 hover:opacity-80 transition">
                     <h1 class="text-2xl font-bold">Pencatatan KI</h1>
                     <p class="text-red-100 text-sm">Sistem Pencatatan Kekayaan Intelektual</p>
-                </div>
+                </a>
 
                 <!-- Navigation Menu (Tengah) -->
                 <nav class="flex-1 flex justify-center">
                     <ul class="flex space-x-8">
                         <li>
                             <a href="{{ route('user.dashboard') }}" 
-                               class="hover:text-red-200 transition duration-200 {{ request()->routeIs('user.dashboard') ? 'border-b-2 border-white pb-1 font-semibold' : '' }}">
+                               class="hover:text-red-200 transition duration-200 {{ request()->routeIs('user.dashboard') || request()->routeIs('pengajuan.riwayat') ? 'border-b-2 border-white pb-1 font-semibold' : '' }}">
                                 Beranda
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('pengajuan.index') }}" 
-                               class="hover:text-red-200 transition duration-200 {{ request()->routeIs('pengajuan.*') ? 'border-b-2 border-white pb-1 font-semibold' : '' }}">
+                               class="hover:text-red-200 transition duration-200 {{ request()->routeIs('pengajuan.*') && !request()->routeIs('pengajuan.riwayat') ? 'border-b-2 border-white pb-1 font-semibold' : '' }}">
                                 Pengajuan
                             </a>
                         </li>
@@ -66,10 +65,6 @@
                             <p class="text-sm font-semibold text-gray-700">{{ Auth::user()->name ?? 'Guest' }}</p>
                             <p class="text-xs text-gray-500">{{ Auth::user()->email ?? 'guest@example.com' }}</p>
                         </div>
-                        <a href="{{ route('user.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-                            Dashboard
-                        </a>
-                        <hr class="my-2">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
@@ -86,7 +81,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
+    <main class="flex-1 container mx-auto px-6 py-8">
         @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 relative" role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>
@@ -103,7 +98,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-red-600 text-white mt-16">
+    <footer class="bg-red-600 text-white">
         <div class="container mx-auto px-6 py-6">
             <div class="text-center">
                 <p class="text-sm">&copy; 2026 Sistem Pencatatan Kekayaan Intelektual. All rights reserved.</p>

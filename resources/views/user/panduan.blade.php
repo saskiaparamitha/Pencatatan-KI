@@ -3,7 +3,7 @@
 @section('title', 'Panduan - Pencatatan KI')
 
 @section('content')
-<div class="min-h-screen flex flex-col">
+<div>
     <!-- Main Content -->
     <div class="flex-grow">
         <div class="bg-white rounded-xl shadow-md">
@@ -70,6 +70,30 @@
                         </div>
                     </div>
 
+                    <!-- PVT (Perlindungan Varietas Tanaman) -->
+                    <div class="border border-gray-300 rounded-lg">
+                        <button onclick="toggleAccordion('varietas-tanaman')" class="w-full flex items-center justify-between px-6 py-5 bg-gray-50 hover:bg-gray-100 transition rounded-lg">
+                            <span class="text-gray-800 font-medium text-lg">PVT</span>
+                            <svg id="icon-varietas-tanaman" class="w-6 h-6 text-gray-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                        <div id="content-varietas-tanaman" class="hidden px-6 py-5 bg-white border-t border-gray-200">
+                            <p class="text-gray-600 text-base leading-relaxed">
+                                <strong>Perlindungan Varietas Tanaman (PVT)</strong> adalah perlindungan khusus yang diberikan negara kepada varietas tanaman yang dihasilkan oleh pemulia tanaman melalui kegiatan pemuliaan tanaman.
+                            </p>
+                            <div class="mt-4">
+                                <p class="font-semibold text-gray-700 mb-2">Dokumen yang diperlukan:</p>
+                                <ul class="list-disc list-inside text-gray-600 text-base space-y-1">
+                                    <li>Deskripsi teknis varietas</li>
+                                    <li>Foto tanaman</li>
+                                    <li>Hasil uji lapangan</li>
+                                    <li>Silsilah pemuliaan</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Merek -->
                     <div class="border border-gray-300 rounded-lg">
                         <button onclick="toggleAccordion('merek')" class="w-full flex items-center justify-between px-6 py-5 bg-gray-50 hover:bg-gray-100 transition rounded-lg">
@@ -119,41 +143,17 @@
                         </div>
                     </div>
 
-                    <!-- Varietas Tanaman -->
-                    <div class="border border-gray-300 rounded-lg">
-                        <button onclick="toggleAccordion('varietas-tanaman')" class="w-full flex items-center justify-between px-6 py-5 bg-gray-50 hover:bg-gray-100 transition rounded-lg">
-                            <span class="text-gray-800 font-medium text-lg">Varietas Tanaman</span>
-                            <svg id="icon-varietas-tanaman" class="w-6 h-6 text-gray-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
-                        <div id="content-varietas-tanaman" class="hidden px-6 py-5 bg-white border-t border-gray-200">
-                            <p class="text-gray-600 text-base leading-relaxed">
-                                <strong>Perlindungan Varietas Tanaman (PVT)</strong> adalah perlindungan khusus yang diberikan negara kepada varietas tanaman yang dihasilkan oleh pemulia tanaman melalui kegiatan pemuliaan tanaman.
-                            </p>
-                            <div class="mt-4">
-                                <p class="font-semibold text-gray-700 mb-2">Dokumen yang diperlukan:</p>
-                                <ul class="list-disc list-inside text-gray-600 text-base space-y-1">
-                                    <li>Deskripsi teknis varietas</li>
-                                    <li>Foto tanaman</li>
-                                    <li>Hasil uji lapangan</li>
-                                    <li>Silsilah pemuliaan</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desain Sirkuit -->
+                    <!-- Desain TSLT (Tata Letak Sirkuit Terpadu) -->
                     <div class="border border-gray-300 rounded-lg">
                         <button onclick="toggleAccordion('desain-sirkuit')" class="w-full flex items-center justify-between px-6 py-5 bg-gray-50 hover:bg-gray-100 transition rounded-lg">
-                            <span class="text-gray-800 font-medium text-lg">Desain Sirkuit</span>
+                            <span class="text-gray-800 font-medium text-lg">Desain TSLT</span>
                             <svg id="icon-desain-sirkuit" class="w-6 h-6 text-gray-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
                         </button>
                         <div id="content-desain-sirkuit" class="hidden px-6 py-5 bg-white border-t border-gray-200">
                             <p class="text-gray-600 text-base leading-relaxed">
-                                <strong>Desain Tata Letak Sirkuit Terpadu (DTLST)</strong> adalah kreasi berupa rancangan peletakan tiga dimensi dari berbagai elemen, sekurang-kurangnya satu dari elemen tersebut adalah elemen aktif, serta sebagian atau semua interkoneksi dalam suatu sirkuit terpadu.
+                                <strong>Desain Tata Letak Sirkuit Terpadu (TLST)</strong> adalah kreasi berupa rancangan peletakan tiga dimensi dari berbagai elemen, sekurang-kurangnya satu dari elemen tersebut adalah elemen aktif, serta sebagian atau semua interkoneksi dalam suatu sirkuit terpadu.
                             </p>
                             <div class="mt-4">
                                 <p class="font-semibold text-gray-700 mb-2">Dokumen yang diperlukan:</p>
@@ -185,56 +185,6 @@
                                     <li>Peta wilayah geografis</li>
                                     <li>Foto produk</li>
                                     <li>Surat kuasa dari komunitas</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Aplikasi SI-PORT -->
-                    <div class="border border-gray-300 rounded-lg">
-                        <button onclick="toggleAccordion('aplikasi-siport')" class="w-full flex items-center justify-between px-6 py-5 bg-gray-50 hover:bg-gray-100 transition rounded-lg">
-                            <span class="text-gray-800 font-medium text-lg">Aplikasi SI-PORT</span>
-                            <svg id="icon-aplikasi-siport" class="w-6 h-6 text-gray-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
-                        <div id="content-aplikasi-siport" class="hidden px-6 py-5 bg-white border-t border-gray-200">
-                            <p class="text-gray-600 text-base leading-relaxed">
-                                <strong>SI-PORT (Sistem Informasi Pencatatan Online Research and Technology)</strong> adalah platform digital untuk pencatatan dan pengelolaan kekayaan intelektual secara online.
-                            </p>
-                            <div class="mt-4">
-                                <p class="font-semibold text-gray-700 mb-2">Fitur utama:</p>
-                                <ul class="list-disc list-inside text-gray-600 text-base space-y-1">
-                                    <li>Pendaftaran pengajuan KI secara online</li>
-                                    <li>Tracking status pengajuan real-time</li>
-                                    <li>Upload dokumen digital</li>
-                                    <li>Notifikasi otomatis</li>
-                                    <li>Dashboard monitoring</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Freedom To Operate -->
-                    <div class="border border-gray-300 rounded-lg">
-                        <button onclick="toggleAccordion('freedom-operate')" class="w-full flex items-center justify-between px-6 py-5 bg-gray-50 hover:bg-gray-100 transition rounded-lg">
-                            <span class="text-gray-800 font-medium text-lg">Freedom To Operate</span>
-                            <svg id="icon-freedom-operate" class="w-6 h-6 text-gray-600 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
-                        <div id="content-freedom-operate" class="hidden px-6 py-5 bg-white border-t border-gray-200">
-                            <p class="text-gray-600 text-base leading-relaxed">
-                                <strong>Freedom To Operate (FTO)</strong> adalah analisis untuk memastikan bahwa suatu produk atau teknologi tidak melanggar hak paten yang masih berlaku milik pihak lain.
-                            </p>
-                            <div class="mt-4">
-                                <p class="font-semibold text-gray-700 mb-2">Tahapan FTO:</p>
-                                <ul class="list-disc list-inside text-gray-600 text-base space-y-1">
-                                    <li>Identifikasi teknologi yang akan dikembangkan</li>
-                                    <li>Pencarian paten yang relevan</li>
-                                    <li>Analisis klaim paten</li>
-                                    <li>Evaluasi risiko pelanggaran</li>
-                                    <li>Rekomendasi strategi</li>
                                 </ul>
                             </div>
                         </div>

@@ -358,15 +358,20 @@ function nextPage(page) {
         return;
     }
 
-    // Hide current page
-    document.getElementById(`page-${currentPage}`).classList.add('hidden');
+    // Sembunyikan SEMUA page dulu
+    document.querySelectorAll('.form-page').forEach(p => {
+        p.classList.add('hidden');
+    });
     
-    // Show next page
     document.getElementById(`page-${page}`).classList.remove('hidden');
+
+    // Hide current page
+    // document.getElementById(`page-${currentPage}`).classList.add('hidden');
+    // Show next page
+    // document.getElementById(`page-${page}`).classList.remove('hidden');
     
     // Update progress
     updateProgress(page);
-    
     currentPage = page;
     
     // Scroll to top
@@ -374,15 +379,19 @@ function nextPage(page) {
 }
 
 function previousPage(page) {
+    // Sembunyikan SEMUA page dulu untuk memastikan tidak ada yang dobel
+    document.querySelectorAll('.form-page').forEach(p => {
+        p.classList.add('hidden');
+    });
+
     // Hide current page
-    document.getElementById(`page-${currentPage}`).classList.add('hidden');
+    // document.getElementById(`page-${currentPage}`).classList.add('hidden');
     
     // Show previous page
     document.getElementById(`page-${page}`).classList.remove('hidden');
     
     // Update progress
     updateProgress(page);
-    
     currentPage = page;
     
     // Scroll to top
@@ -390,34 +399,34 @@ function previousPage(page) {
 }
 
 function updateProgress(page) {
+    const totalSteps = 2;
+
     // Reset all steps
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= totalSteps; i++) {
         const circle = document.getElementById(`step-circle-${i}`);
         const text = document.getElementById(`step-text-${i}`);
         
+        if (!circle || !text) continue; // skip jika element tidak ada
+        
         if (i < page) {
-            // Completed steps
             circle.className = 'w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold';
             text.className = 'text-sm font-semibold text-green-600';
         } else if (i === page) {
-            // Current step
             circle.className = 'w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center font-bold';
             text.className = 'text-sm font-semibold text-red-600';
         } else {
-            // Future steps
             circle.className = 'w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold';
             text.className = 'text-sm font-semibold text-gray-600';
         }
     }
     
     // Update lines
-    for (let i = 1; i <= 2; i++) {
+    for (let i = 1; i < totalSteps; i++) {
         const line = document.getElementById(`line-${i}`);
-        if (i < page) {
-            line.className = 'flex-1 h-1 bg-green-500 mx-4';
-        } else {
-            line.className = 'flex-1 h-1 bg-gray-300 mx-4';
-        }
+        if (!line) continue; // skip jika tidak ada
+        line.className = i < page 
+            ? 'flex-1 h-1 bg-green-500 mx-4' 
+            : 'flex-1 h-1 bg-gray-300 mx-4';
     }
 }
 

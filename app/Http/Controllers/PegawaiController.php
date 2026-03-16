@@ -9,10 +9,14 @@ class PegawaiController extends Controller
 {
     public function search(Request $request)
     {
-        $query = $request->get('q');
+        $query = $request->q ?? '';
 
-        $pegawai = MstPegawai::where('nama', 'like', '%' . $query . '%')
-                        ->get(['mst_pegawai_id as id', 'nama']); // ← alias mst_pegawai_id jadi "id"
+        $pegawai = MstPegawai::when($query, function($q) use ($query) {
+                        $q->where('nama', 'like', "%{$query}%")
+                        ->orWhere('nip_pegawai', 'like', "%{$query}%");
+                    })
+                    ->limit(20)
+                    ->get();
 
         return response()->json($pegawai);
     }

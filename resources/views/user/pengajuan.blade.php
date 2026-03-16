@@ -9,14 +9,8 @@
         <div class="flex justify-between items-center">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Pilih Jenis Pengajuan</h2>
-                <p class="text-gray-600 text-sm mt-1">Pilih jenis kekayaan intelektual yang ingin Anda ajukan</p>
+                <p class="text-gray-600 text-sm mt-1">Pilih jenis Kekayaan Intelektual yang ingin Anda ajukan</p>
             </div>
-            <a href="{{ route('user.panduan') }}" class="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Butuh Bantuan?
-            </a>
         </div>
     </div>
 
@@ -26,7 +20,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium uppercase tracking-wide">Total Pengajuan</p>
-                    <p class="text-4xl font-bold text-red-600 mt-2">24</p>
+                    <p class="text-4xl font-bold text-red-600 mt-2">{{ $total }}</p>
                 </div>
                 <div class="bg-red-100 rounded-full p-4">
                     <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +34,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium uppercase tracking-wide">Disetujui</p>
-                    <p class="text-4xl font-bold text-green-600 mt-2">18</p>
+                    <p class="text-4xl font-bold text-green-600 mt-2">{{ $disetujui }}</p>
                 </div>
                 <div class="bg-green-100 rounded-full p-4">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +48,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium uppercase tracking-wide">Dalam Proses</p>
-                    <p class="text-4xl font-bold text-yellow-600 mt-2">5</p>
+                    <p class="text-4xl font-bold text-yellow-600 mt-2">{{ $diproses }}</p>
                 </div>
                 <div class="bg-yellow-100 rounded-full p-4">
                     <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +62,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium uppercase tracking-wide">Ditolak</p>
-                    <p class="text-4xl font-bold text-gray-600 mt-2">1</p>
+                    <p class="text-4xl font-bold text-gray-600 mt-2">{{ $ditolak }}</p>
                 </div>
                 <div class="bg-gray-100 rounded-full p-4">
                     <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

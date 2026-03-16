@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\TrxUsulanKIDokumen;     
+use App\Models\TrxUsulanKIKolaborator;
 
 class TrxUsulanKI extends Model
 {
@@ -15,6 +17,7 @@ class TrxUsulanKI extends Model
         'judul',  
         'tanggal',
         'deskripsi',
+        'mst_status_id',
     ];
 
     public function user()
@@ -29,12 +32,12 @@ class TrxUsulanKI extends Model
 
     public function dokumen()
     {
-        return $this->hasMany(TrxUsulanKiDokumen::class, 'trx_usulan_ki_id', 'trx_usulan_ki_id');
+        return $this->hasMany(TrxUsulanKIDokumen::class, 'trx_usulan_ki_id', 'trx_usulan_ki_id');
     }
 
     public function kolaborator()
     {
-        return $this->hasMany(TrxUsulanKiKolaborator::class, 'trx_usulan_ki_id', 'trx_usulan_ki_id');
+        return $this->hasMany(TrxUsulanKIKolaborator::class, 'trx_usulan_ki_id', 'trx_usulan_ki_id');
     }
 
     public function getDokumenByJenis($jenis)

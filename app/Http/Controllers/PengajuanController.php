@@ -28,11 +28,23 @@ class PengajuanController extends Controller
      */
     public function index()
     {
-        $usulan = TrxUsulanKI::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $userId = Auth::id();
 
-        return view('user.pengajuan', compact('usulan'));
+        $total     = TrxUsulanKI::where('user_id', $userId)->count();
+
+        $disetujui = TrxUsulanKI::where('user_id', $userId)
+                                ->whereHas('status', fn($q) => $q->where('nama_status', 'Selesai'))
+                                ->count();
+
+        $diproses  = TrxUsulanKI::where('user_id', $userId)
+                                ->whereHas('status', fn($q) => $q->whereIn('nama_status', ['Kirim', 'Terima', 'Proses Review']))
+                                ->count();
+
+        $ditolak   = TrxUsulanKI::where('user_id', $userId)
+                                ->whereHas('status', fn($q) => $q->where('nama_status', 'Tolak'))
+                                ->count();
+
+        return view('user.pengajuan', compact('total', 'disetujui', 'diproses', 'ditolak'));
     }
 
     /**
@@ -53,18 +65,14 @@ class PengajuanController extends Controller
         return view('user.hak-cipta', compact('draft'));
     }
 
-    /**
-     * Form PVT
-     */
+    /**Form PVT */
     public function createPVT()
     {
         $draft = $this->getDraft('pvt');
         return view('user.pvt', compact('draft'));
     }
 
-    /**
-     * Form Merek
-     */
+    /** Form Merek */
     public function createMerek()
     {
         $draft = $this->getDraft('merek');
@@ -110,12 +118,11 @@ class PengajuanController extends Controller
             ->first();
     }
 
-
     /**
      * Store pengajuan (submit final)
      */
     public function storeDataForm(Request $request)
-{
+    {
     // Validasi dasar untuk semua jenis KI
     $rules = [
         'jenis_ki'           => 'required|string',
@@ -124,22 +131,50 @@ class PengajuanController extends Controller
         'dokumen_deskripsi'  => 'required|array|min:1',
         'dokumen_deskripsi.*'=> 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
         'kolaborator_ids'    => 'nullable|array',
-        'pernyataan'         => 'required|accepted',
+        //'pernyataan'         => 'required|accepted',
     ];
 
     // Validasi spesifik per jenis KI
     switch ($request->jenis_ki) {
-        case 'hak_cipta':
-            $rules['tempat_hak_cipta'] = 'required|string';
-            $rules['tanggal_hak_cipta'] = 'required|date';
-            break;
         case 'paten':
             $rules['jenis_paten'] = 'required|string';
             $rules['bidang_teknologi'] = 'required|string';
             $rules['tanggal_pembuatan'] = 'required|date';
             break;
+        case 'hak_cipta':
+            $rules['tempat_hak_cipta'] = 'required|string';
+            $rules['tanggal_hak_cipta'] = 'required|date';
+            break;
         case 'pvt':
-            $rules['tanggal_pembuatan'] = 'required|date';
+            $rules['nama_umum_pvt'] = 'required|string';
+            $rules['nama_usulan_pvt'] = 'required|string';
+            $rules['negara_asal_pvt'] = 'required|string';
+            $rules['informasi_teknis'] = 'required|string';
+            $rules['tanggal_pvt'] = 'required|date';
+            break;
+        case 'merek':
+            $rules['uraian_warna_merek'] = 'required|string';
+            $rules['arti_merek'] = 'required|string';
+            $rules['kuasa_merek'] = 'required|string';
+            $rules['tanggal_merek'] = 'required|date';
+            break;
+        case 'desain_industri':
+            $rules['tanggal_desain_industri'] = 'required|date';
+            break;
+        case 'desain_tlst':
+            $rules['tanggal_pertama_dientry'] = 'required|date';
+            $rules['jumlah_lisensi'] = 'required|string';
+            $rules['tanggal_desain_tlst'] = 'required|date';
+            break;
+        case 'indikasi_geografis':
+            $rules['nama_barang_indikasi_geografis'] = 'required|string';
+            $rules['kualitas_indikasi_geografis'] = 'required|string';
+            $rules['karakteristik_indikasi_geografis'] = 'required|string';
+            $rules['kelas_nice_indikasi_geografis'] = 'required|string';
+            $rules['sejarah'] = 'required|string';
+            $rules['tradisi'] = 'required|string';
+            $rules['jumlah_lisensi_indikasi_geografis'] = 'required|string';
+            $rules['tanggal_indikasi_geografis'] = 'required|date';
             break;
     }
 
@@ -154,15 +189,18 @@ class PengajuanController extends Controller
             'user_id' => Auth::id(),
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
+            'mst_status_id'  => 2, // 2 = 'Kirim'
         ];
 
         // Tentukan field tanggal sesuai jenis KI
-        if ($request->jenis_ki == 'hak_cipta') {
-            $data['tanggal'] = $request->tanggal_hak_cipta;
-            $data['deskripsi'] .= '\n\nTempat: ' . $request->tempat_hak_cipta;
-        } else {
-            $data['tanggal'] = $request->tanggal_pembuatan;
-        }
+        $data['tanggal'] = $request->tanggal_pembuatan
+            ?? $request->tanggal_hak_cipta
+            ?? $request->tanggal_pvt
+            ?? $request->tanggal_merek
+            ?? $request->tanggal_desain_industri
+            ?? $request->tanggal_desain_tlst
+            ?? $request->tanggal_indikasi_geografis
+            ?? now();
 
         // Simpan data utama
         $usulan = TrxUsulanKI::create($data);
@@ -171,11 +209,16 @@ class PengajuanController extends Controller
         $this->uploadDokumen($request, $usulan);
 
         // Simpan kolaborator
-        $this->saveKolaborator($request, $usulan);
+        // $this->saveKolaborator($request, $usulan);
+
+        // Simpan kolaborator hanya kalau ada yang dipilih
+        if ($request->has('kolaborator_ids') && !empty(array_filter($request->kolaborator_ids))) {
+            $this->saveKolaborator($request, $usulan);
+        }
 
         DB::commit();
 
-        return redirect()->route('pengajuan.index')
+        return redirect()->route('user.dashboard')
             ->with('success', 'Pengajuan berhasil disubmit!');
             
     } catch (\Exception $e) {
@@ -195,7 +238,7 @@ class PengajuanController extends Controller
         try {
             // Cek apakah update draft atau buat baru
             if ($request->usulan_id) {
-                $usulan = TrxUsulanKi::findOrFail($request->usulan_id);
+                $usulan = TrxUsulanKI::findOrFail($request->usulan_id);
                 
                 if ($usulan->user_id != Auth::id()) {
                     return response()->json([
@@ -243,7 +286,7 @@ class PengajuanController extends Controller
                 ]);
             } else {
                 // Buat draft baru
-                $usulan = TrxUsulanKi::create([
+                $usulan = TrxUsulanKI::create([
                     'mst_ki_id' => $this->kiMap[$request->jenis_ki],
                     'user_id'   => Auth::id(),
                     'judul'     => $request->judul ?? 'Draft',
@@ -354,28 +397,60 @@ class PengajuanController extends Controller
         }
     }
 
-    /**
-     * Simpan kolaborator
-     */
+    public function show($id)
+    {
+        $pengajuan = TrxUsulanKI::with(['status', 'mstKI', 'dokumen', 'kolaborator.pegawai'])
+                                ->where('user_id', Auth::id())
+                                ->findOrFail($id);
+
+        return view('user.pengajuan-detail', compact('pengajuan'));
+    }
+
+    public function riwayat()
+    {
+        $pengajuan = TrxUsulanKI::where('user_id', Auth::id())
+                                ->with('status', 'mstKI')
+                                ->orderBy('updated_at', 'desc')
+                                ->get();
+
+        return view('user.riwayat', compact('pengajuan'));
+    }
+
+    public function searchPegawai(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        $pegawai = \App\Models\MstPegawai::where('nama', 'LIKE', "%{$query}%")
+            ->orWhere('nip_pegawai', 'LIKE', "%{$query}%")
+            ->select('mst_pegawai_id', 'nama', 'nip_pegawai', 'satuan_kerja')
+            ->limit(10)
+            ->get();
+        
+        return response()->json($pegawai);
+    }
+
+    /** Simpan kolaborator */
     private function saveKolaborator(Request $request, $usulan)
     {
         if (!$request->has('kolaborator_ids')) {
             return;
         }
 
+        // Simpan kolaborator baru
+        $kolaboratorIds = array_filter($request->kolaborator_ids, fn($v) => !empty(trim($v)));
+        
+        if (empty($kolaboratorIds)) {
+            return;
+        }
+
         // Hapus kolaborator lama
         TrxUsulanKIKolaborator::where('trx_usulan_ki_id', $usulan->trx_usulan_ki_id)->delete();
 
-        // Simpan kolaborator baru
-        $kolaboratorIds = array_filter($request->kolaborator_ids);
-        
-        foreach ($kolaboratorIds as $index => $pegawaiId) {
-            if ($pegawaiId) {
-                TrxUsulanKIKolaborator::create([
-                    'trx_usulan_ki_id' => $usulan->trx_usulan_ki_id,
-                    'mst_pegawai_id' => $pegawaiId,
-                ]);
-            }
+        foreach ($kolaboratorIds as $pegawaiId) {
+            TrxUsulanKIKolaborator::create([
+                'trx_usulan_ki_id' => $usulan->trx_usulan_ki_id,
+                'mst_pegawai_id'   => (int) $pegawaiId,
+            ]);
         }
     }
 
