@@ -41,6 +41,20 @@ Route::middleware(['auth', 'role:verifikator,reviewer'])
     })
     ->name('admin.dashboard');
 
+/* ADMIN VERIFIKATOR */
+Route::middleware(['auth', 'role:verifikator'])
+    ->get('/admin/verifikator', function () {
+        return view('admin.verifikator');
+    })
+    ->name('admin.verifikator');
+
+/* ADMIN REVIEWER */
+Route::middleware(['auth', 'role:reviewer'])
+    ->get('/admin/reviewer', function () {
+        return view('admin.reviewer');
+    })
+    ->name('admin.reviewer');
+
 Route::get('/redirect', function () {
     $user = Auth::user();
     $role = $user->role;

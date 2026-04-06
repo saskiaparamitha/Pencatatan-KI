@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard User - Pencatatan KI</title>
+    <title>Dashboard - Pencatatan KI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -18,16 +18,119 @@
         <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-2xl font-bold">Dashboard User (Pengusul)</h1>
-                    <p class="text-teal-100 text-sm mt-1">Sistem Pencatatan Kekayaan Intelektual</p>
+                    @if(auth()->user()->role === 'user')
+                        <h1 class="text-2xl font-bold">Dashboard User (Pengusul)</h1>
+                        <p class="text-teal-100 text-sm mt-1">Sistem Pencatatan Kekayaan Intelektual</p>
+                    @elseif(auth()->user()->role === 'verifikator')
+                        <h1 class="text-2xl font-bold">Dashboard Admin Verifikator</h1>
+                        <p class="text-teal-100 text-sm mt-1">Panel Verifikasi Kekayaan Intelektual</p>
+                    @elseif(auth()->user()->role === 'reviewer')
+                        <h1 class="text-2xl font-bold">Dashboard Admin Reviewer</h1>
+                        <p class="text-teal-100 text-sm mt-1">Panel Review Kekayaan Intelektual</p>
+                    @endif
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="text-right">
-                        <p class="text-sm font-medium">Nama Pengguna</p>
-                        <p class="text-xs text-teal-200">user@example.com</p>
+                        <p class="text-sm font-medium">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-teal-200">{{ auth()->user()->email }}</p>
                     </div>
-                    <button class="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-lg transition duration-200">
-                        Logout
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-lg transition duration-200">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        @if(auth()->user()->role === 'user')
+            <!-- Konten untuk User -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Ajukan KI Baru</h3>
+                    <p class="text-gray-600 mb-4">Buat pengajuan baru untuk kekayaan intelektual Anda.</p>
+                    <button class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition duration-200">
+                        Ajukan Sekarang
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Pengajuan</h3>
+                    <p class="text-gray-600 mb-4">Lihat status pengajuan KI Anda.</p>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                        Lihat Status
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Riwayat KI</h3>
+                    <p class="text-gray-600 mb-4">Lihat semua KI yang telah Anda ajukan.</p>
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+                        Lihat Riwayat
+                    </button>
+                </div>
+            </div>
+        @elseif(auth()->user()->role === 'verifikator')
+            <!-- Konten untuk Verifikator -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Verifikasi Pengajuan</h3>
+                    <p class="text-gray-600 mb-4">Periksa dan verifikasi pengajuan KI yang masuk.</p>
+                    <a href="{{ route('admin.verifikator') }}" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition duration-200 inline-block">
+                        Verifikasi
+                    </a>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Laporan Verifikasi</h3>
+                    <p class="text-gray-600 mb-4">Lihat laporan verifikasi yang telah dilakukan.</p>
+                    <button class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-200">
+                        Lihat Laporan
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Statistik</h3>
+                    <p class="text-gray-600 mb-4">Lihat statistik verifikasi KI.</p>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                        Lihat Statistik
+                    </button>
+                </div>
+            </div>
+        @elseif(auth()->user()->role === 'reviewer')
+            <!-- Konten untuk Reviewer -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Review Pengajuan</h3>
+                    <p class="text-gray-600 mb-4">Review pengajuan KI yang telah diverifikasi.</p>
+                    <a href="{{ route('admin.reviewer') }}" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200 inline-block">
+                        Review
+                    </a>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Laporan Review</h3>
+                    <p class="text-gray-600 mb-4">Lihat laporan review yang telah dilakukan.</p>
+                    <button class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition duration-200">
+                        Lihat Laporan
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Rekomendasi</h3>
+                    <p class="text-gray-600 mb-4">Berikan rekomendasi untuk pengajuan KI.</p>
+                    <button class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition duration-200">
+                        Rekomendasikan
+                    </button>
+                </div>
+            </div>
+        @endif
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-600">
+            <p>&copy; 2026 Sistem Pencatatan Kekayaan Intelektual. All rights reserved.</p>
+        </footer>
+    </main>
+</body>
+</html>
                     </button>
                 </div>
             </div>
